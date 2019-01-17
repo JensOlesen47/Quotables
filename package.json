@@ -1,0 +1,11 @@
+{
+  "name": "quotables",
+  "version": "1.0.0",
+  "description": "discord bot for storing quotes",
+  "main": "index.js",
+  "scripts": {
+    "test": "start"
+  },
+  "author": "Jens Olesen",
+  "license": "ISC"
+}
