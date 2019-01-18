@@ -28,18 +28,26 @@ module.exports.storeQuote = async message => {
 };
 
 module.exports.getQuote = async message => {
-    const num = message.content.match(/[0-9]+/)[0] || 0;
-    return readQuote(num);
+    const num = (message.content.match(/[0-9]+/) || [])[0] || 0;
+    const searchTerm = message.content.substring(2).trim();
+    return await readQuote(num, searchTerm);
 };
 
-const readQuote = async number => {
+const readQuote = async (number, searchTerm) => {
     const quotes = fs.readFileSync('quotes', {encoding: 'utf8'}).split(`\n`);
 
-    const random = number <= 0 || number > quotes.length;
-    if (random) number = Math.floor(Math.random() * quotes.length);
-    else --number;
+    let quote;
+    if (number && number <= quotes.length) {
+        quote = quotes[number - 1];
+    } else if (searchTerm) {
+        const matchingQuotes = quotes.filter(q => q.includes(searchTerm));
+        quote = matchingQuotes[Math.floor(Math.random() * matchingQuotes.length)];
+    } else {
+        quote = quotes[Math.floor(Math.random() * quotes.length)];
+    }
+    logger.info(`Retrieved quote: ${quote}`);
 
-    const quoteArr = quotes[number].split(`|`);
+    const quoteArr = quote.split(`|`);
     const quoteObj = {
         quote: quoteArr[0],
         saidBy: quoteArr[1],
@@ -47,7 +55,5 @@ const readQuote = async number => {
         storedBy: quoteArr[3],
         storedAt: quoteArr[4]
     };
-    logger.info(`Retrieved quote #${number} ${random ? 'randomly' : ''}:`);
-    logger.info(quotes[number]);
     return quoteObj;
 };
