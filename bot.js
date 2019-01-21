@@ -10,7 +10,9 @@ quotables.on('message', async message => {
 
     if (message.content.startsWith(`"`)) quoter.storeQuote(message);
 
-    if (message.content.startsWith(`>>`)) {
+    else if (message.content.startsWith(`>>>`)) message.author.send(await quoter.getAllQuotes(message));
+
+    else if (message.content.startsWith(`>>`)) {
         const quoteObj = await quoter.getQuote(message);
         const embed = new discord.RichEmbed()
             .setColor(`#702050`)
@@ -18,6 +20,7 @@ quotables.on('message', async message => {
             .setFooter(`Saved by ${quoteObj.storedBy} - ${quoteObj.storedAt}`);
         message.channel.send(embed);
     }
+
 });
 
 quotables.login(auth.token);

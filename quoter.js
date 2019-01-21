@@ -19,7 +19,7 @@ module.exports.storeQuote = async message => {
     logger.info(`Stored by ${message.author.username} on ${now}`);
 
     // this array represents [ quote, saidBy, saidAt, storedBy, storedAt ]
-    const storableQuote = [ quote, afterQuote, now, message.author.username, now ].join(`|`) + `\n`;
+    const storableQuote = `\n` + [ quote, afterQuote, now, message.author.username, now ].join(`|`);
 
     fs.appendFile('quotes', storableQuote, {encoding: 'utf8'}, err => {
         if (err) throw err;
@@ -28,19 +28,15 @@ module.exports.storeQuote = async message => {
 };
 
 module.exports.getQuote = async message => {
-    const num = (message.content.match(/[0-9]+/) || [])[0] || 0;
-    const searchTerm = message.content.substring(2).trim();
-    return await readQuote(num, searchTerm);
-};
-
-const readQuote = async (number, searchTerm) => {
+    const number = (message.content.match(/[0-9]+/) || [])[0] || 0;
+    const searchTerm = message.content.substring(2).trim().toLowerCase();
     const quotes = fs.readFileSync('quotes', {encoding: 'utf8'}).split(`\n`);
 
     let quote;
     if (number && number <= quotes.length) {
         quote = quotes[number - 1];
     } else if (searchTerm) {
-        const matchingQuotes = quotes.filter(q => q.includes(searchTerm));
+        const matchingQuotes = quotes.filter(q => q.toLowerCase().includes(searchTerm));
         quote = matchingQuotes[Math.floor(Math.random() * matchingQuotes.length)];
     } else {
         quote = quotes[Math.floor(Math.random() * quotes.length)];
@@ -56,4 +52,14 @@ const readQuote = async (number, searchTerm) => {
         storedAt: quoteArr[4]
     };
     return quoteObj;
+};
+
+module.exports.getAllQuotes = async message => {
+    logger.info(`Getting all quotes for ${message.author.username}`);
+    const quotes = fs.readFileSync('quotes', {encoding: 'utf8'}).split(`\n`);
+
+    return quotes.map(q => {
+        const quoteArr = q.split('|');
+        return `"${quoteArr[0]}" ~ ${quoteArr[1]}`;
+    }).join(`\n`);
 };
