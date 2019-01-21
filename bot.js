@@ -14,13 +14,17 @@ quotables.on('message', async message => {
 
     else if (message.content.startsWith(`>>`)) {
         const quoteObj = await quoter.getQuote(message);
-        const embed = new discord.RichEmbed()
-            .setColor(`#702050`)
-            .addField(`${quoteObj.quote}`, `~ ${quoteObj.saidBy}`)
-            .setFooter(`Saved by ${quoteObj.storedBy} - ${quoteObj.storedAt}`);
+        const embed = quoteObj.quote.startsWith(`http`)
+            ? new discord.RichEmbed()
+                .setColor(`#702050`)
+                .setImage(`${quoteObj.quote}`)
+                .setFooter(`Saved by ${quoteObj.storedBy} - ${quoteObj.storedAt}`)
+            : new discord.RichEmbed()
+                .setColor(`#702050`)
+                .addField(`${quoteObj.quote}`, `${quoteObj.saidBy ? '~ ' : ''}${quoteObj.saidBy}`)
+                .setFooter(`Saved by ${quoteObj.storedBy} - ${quoteObj.storedAt}`)
         message.channel.send(embed);
     }
-
 });
 
 quotables.login(auth.token);
