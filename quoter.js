@@ -39,6 +39,11 @@ module.exports.getQuote = async message => {
         quote = quotes[number - 1];
     } else if (searchTerm) {
         const matchingQuotes = quotes.filter(q => q.toLowerCase().includes(searchTerm));
+        if (matchingQuotes.length === 0) {
+            logger.info(`Could not find quote matching search term [${searchTerm}]`);
+            message.react('\:shrug:');
+            return {};
+        }
         quote = matchingQuotes[Math.floor(Math.random() * matchingQuotes.length)];
     } else {
         quote = quotes[Math.floor(Math.random() * quotes.length)];

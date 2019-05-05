@@ -14,6 +14,9 @@ quotables.on('message', async message => {
 
     else if (message.content.startsWith(`>>`)) {
         const quoteObj = await quoter.getQuote(message);
+        if (Object.entries(quoteObj).length === 0) {
+            return;
+        }
         const embed = quoteObj.quote.startsWith(`http`)
             ? new discord.RichEmbed()
                 .setColor(`#702050`)
