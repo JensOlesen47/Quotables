@@ -25,6 +25,8 @@ module.exports.storeQuote = async message => {
         if (err) throw err;
         logger.info(`Stored new quote: ${storableQuote}`);
     });
+
+    message.react('\:+1:');
 };
 
 module.exports.getQuote = async message => {
