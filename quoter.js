@@ -18,8 +18,8 @@ module.exports.storeQuote = async message => {
     const now = moment().format(`MMM Do YYYY h:mm a`);
     logger.info(`Stored by ${message.author.username} on ${now}`);
 
-    // this array represents [ quote, saidBy, saidAt, storedBy, storedAt ]
-    const storableQuote = `\n` + [ quote, afterQuote, now, message.author.username, now ].join(`|`);
+    // this array represents [ quote, saidBy, storedBy, storedAt ]
+    const storableQuote = `\n` + [ quote, afterQuote, message.author.username, now ].join(`|`);
 
     fs.appendFile('quotes', storableQuote, {encoding: 'utf8'}, err => {
         if (err) throw err;
@@ -54,9 +54,8 @@ module.exports.getQuote = async message => {
     const quoteObj = {
         quote: quoteArr[0],
         saidBy: quoteArr[1],
-        saidAt: quoteArr[2],
-        storedBy: quoteArr[3],
-        storedAt: quoteArr[4]
+        storedBy: quoteArr[2],
+        storedAt: quoteArr[3]
     };
     return quoteObj;
 };
