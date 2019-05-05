@@ -64,6 +64,9 @@ module.exports.getAllQuotes = async message => {
     logger.info(`Getting all quotes for ${message.author.username}`);
     const quotes = fs.readFileSync('quotes', {encoding: 'utf8'}).split(`\n`);
 
+    // remove empty line at eof
+    quotes.pop();
+
     return quotes.map(q => {
         const quoteArr = q.split('|');
         return `"${quoteArr[0]}" ~ ${quoteArr[1]}`;
