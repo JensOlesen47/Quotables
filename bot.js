@@ -4,17 +4,24 @@ const quoter = require('./quoter');
 
 const quotables = new discord.Client();
 
+const affirmativeEmoji = ['👌','👍','🤨','🤔','🙄','😬'];
+
 quotables.on('message', async message => {
     if (message.author.bot) return;
     if (message.channel.type !== 'text') return;
 
-    if (message.content.startsWith(`"`)) quoter.storeQuote(message);
+    if (message.content.startsWith(`"`)) {
+        quoter.storeQuote(message);
+        const reaction = affirmativeEmoji[Math.floor(Math.random()*affirmativeEmoji.length)];
+        message.react(reaction);
+    }
 
     else if (message.content.startsWith(`>>>`)) message.author.send(await quoter.getAllQuotes(message));
 
     else if (message.content.startsWith(`>>`)) {
         const quoteObj = await quoter.getQuote(message);
         if (Object.entries(quoteObj).length === 0) {
+            message.react('🤷');
             return;
         }
         const embed = quoteObj.quote.startsWith(`http`)

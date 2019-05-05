@@ -19,14 +19,12 @@ module.exports.storeQuote = async message => {
     logger.info(`Stored by ${message.author.username} on ${now}`);
 
     // this array represents [ quote, saidBy, storedBy, storedAt ]
-    const storableQuote = `\n` + [ quote, afterQuote, message.author.username, now ].join(`|`);
+    const storableQuote = [ quote, afterQuote, message.author.username, now ].join(`|`) + `\n`;
 
     fs.appendFile('quotes', storableQuote, {encoding: 'utf8'}, err => {
         if (err) throw err;
         logger.info(`Stored new quote: ${storableQuote}`);
     });
-
-    message.react('\:+1:');
 };
 
 module.exports.getQuote = async message => {
@@ -41,7 +39,6 @@ module.exports.getQuote = async message => {
         const matchingQuotes = quotes.filter(q => q.toLowerCase().includes(searchTerm));
         if (matchingQuotes.length === 0) {
             logger.info(`Could not find quote matching search term [${searchTerm}]`);
-            message.react('\:shrug:');
             return {};
         }
         quote = matchingQuotes[Math.floor(Math.random() * matchingQuotes.length)];
