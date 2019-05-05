@@ -27,4 +27,8 @@ quotables.on('message', async message => {
     }
 });
 
+quotables.on('error', async err => {
+    console.log(err);
+});
+
 quotables.login(auth.token);
